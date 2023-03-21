@@ -1,0 +1,34 @@
+{
+    "standByPosition": [-23, -60, -17],
+    "withdrawalPosition": [-23, -60, -15],
+    "depositChests": [
+        {
+            "position": [-30, -60, 3],
+            "itemName": "oak_log"
+        },
+        {
+            "position": [-23, -59, -12],
+            "itemName": "spruce_log"
+        },
+        {
+            "position": [-41, -60, 19],
+            "itemName": "acacia_log"
+        },
+        {
+            "position": [-43, -60, 3],
+            "itemName": "jungle_log"
+        },
+        {
+            "position": [-29, -60, 15],
+            "itemName": "warped_stem"
+        },
+        {
+            "position": [-40, -59, 12],
+            "itemName": "crimson_stem"
+        },
+        {
+            "position": [-29, -60, 3],
+            "itemName": "birch_log"
+        }
+    ]
+}

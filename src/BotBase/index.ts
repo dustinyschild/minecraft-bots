@@ -1,0 +1,106 @@
+import { Bot, BotOptions, createBot } from 'mineflayer';
+import mcDataLoader, { IndexedData } from 'minecraft-data';
+import { pathfinder, Movements, goals } from 'mineflayer-pathfinder';
+import { Vec3 } from 'vec3';
+import { ItemRegistry } from '../types';
+import { registerCommands } from '../modules/chat';
+import { Entity } from 'prismarine-entity';
+import { asyncTimeout, timeIn } from '../helpers';
+
+export class BotBase {
+  bot: Bot;
+  mcData: IndexedData;
+  movements: Movements;
+
+  constructor(options: BotOptions) {
+    this.bot = createBot(options);
+    this.mcData = mcDataLoader(this.bot.version);
+
+    this.bot.loadPlugin(pathfinder);
+
+    this.movements = new Movements(this.bot, this.mcData);
+
+    this.bot.once('spawn', async () => {
+      console.log(`${this.bot.username} joined ${options.host}`);
+
+      registerCommands(this.bot, {
+        say: (_username, commandArgs) => {
+          this.bot.chat(commandArgs.join(' '));
+        },
+        block: (_username, [blockName]) => {
+          console.log(this.bot.registry.blocksByName[blockName]);
+        },
+        blocksLike: (_username, [searchText]) => {
+          Object.keys(this.bot.registry.blocksByName)
+            .filter((key) => key.includes(searchText))
+            .map((match) => console.log(match));
+        },
+        blockAt: (_username, [x, y, z]) => {
+          console.log(
+            this.bot.blockAt(new Vec3(parseInt(x), parseInt(y), parseInt(z))),
+          );
+        },
+        item: (_username, [itemName]) => {
+          console.log(this.bot.registry.itemsByName[itemName]);
+        },
+        itemsLike: (_username, [searchText]) => {
+          Object.keys(this.bot.registry.itemsByName)
+            .filter((key) => key.includes(searchText))
+            .map((match) => console.log(match));
+        },
+        itemById: (_username, [id]) => {
+          const item = Object.values(
+            this.bot.registry.itemsByName as ItemRegistry,
+          ).find((item: any) => item.id === parseInt(id));
+
+          console.log(item);
+        },
+        getDrops: () => {
+          Object.values(this.bot.entities)
+            .filter((e) => e.entityType === 45)
+            .forEach((e) => {
+              const entityItem = e.metadata[8] as any;
+
+              const itemName = Object.values(
+                this.bot.registry.itemsByName as ItemRegistry,
+              ).find((item: any) => item.id === entityItem.itemId)?.name;
+
+              console.log(
+                e.position.distanceTo(this.bot.entity.position),
+                this.bot.registry.itemsByName[itemName],
+              );
+            });
+        },
+        entity: (_username, [id]) => {
+          console.log(this.bot.entities[id]);
+        },
+        self: (_username, [property]) => {
+          if (property) {
+            const [, prop] = Object.entries(this.bot.entity).find(
+              ([prop]) => prop === property,
+            ) as [string, Entity];
+
+            console.log(prop);
+          } else {
+            console.log(this.bot.entity);
+          }
+        },
+        sleep: this.sleep,
+      });
+    });
+  }
+
+  /** Methods */
+  sleep = async () => {
+    this.bot.chat('going to sleep now');
+
+    await this.bot.pathfinder.goto(new goals.GoalNear(2, -60, -15, 1));
+
+    const bedBlock = this.bot.blockAt(new Vec3(2, -60, -15));
+    if (bedBlock && this.bot.isABed(bedBlock)) {
+      await this.bot.sleep(bedBlock).catch(() => {
+        console.log("Can't sleep now");
+      });
+    }
+  };
+}
