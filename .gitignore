@@ -55,6 +55,7 @@ coverage
 
 # Transpiled files
 build/
+dist/
 
 # VS Code
 .vscode
@@ -120,3 +121,7 @@ dist
 .tern-port
 # Misc
 .DS_Store
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
