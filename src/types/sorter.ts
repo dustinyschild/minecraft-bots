@@ -1,6 +1,6 @@
 import { Coordinate } from '.';
 
-interface SortChest {
+interface BotChest {
   position: Coordinate;
   itemName: string;
 }
@@ -8,7 +8,7 @@ interface SortChest {
 export interface SorterConfig {
   standByPosition: Coordinate;
   withdrawalPosition: Coordinate;
-  depositChests: SortChest[];
+  depositChests: BotChest[];
 }
 
 export interface SorterConfigs {

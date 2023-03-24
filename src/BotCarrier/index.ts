@@ -1,39 +1,21 @@
 import { BotOptions } from 'mineflayer';
-import { Vec3 } from 'vec3';
 import { BotBase } from '../BotBase';
 import { loadCarrierConfig } from '../configs';
-import { Coordinate } from '../types';
+import { loadCarrierStateMachine } from '../state_machines/carrier';
 
 /* for bulk item transport */
-
 export class BotCarrier extends BotBase {
-  standByPosition: Coordinate;
-  withdrawalChests: Coordinate[];
-  depositChest: Coordinate;
+  stateMachine;
 
   constructor(options: BotOptions) {
     super(options);
 
     const config = loadCarrierConfig(options.username);
 
-    this.standByPosition = config.standByPosition;
-    this.withdrawalChests = config.withdrawalChests;
-    this.depositChest = config.depositChest;
+    this.stateMachine = this.loadStateMachines([
+      loadCarrierStateMachine(this.bot, config),
+    ]);
 
-    this.bot.on('spawn', () => {
-      this.bot.on('chat', (_username, message) => {
-        if (message === 'check') {
-          this.checkWithdrawalChests();
-        }
-      });
-    });
+    this.bot.on('spawn', () => {});
   }
-
-  checkWithdrawalChests = () => {
-    this.withdrawalChests.forEach((position) => {
-      const chest = this.bot.blockAt(new Vec3(...position));
-
-      console.log(chest);
-    });
-  };
 }

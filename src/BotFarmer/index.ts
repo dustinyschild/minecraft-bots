@@ -1,16 +1,7 @@
-import { Bot, BotOptions, createBot } from 'mineflayer';
-import { pathfinder } from 'mineflayer-pathfinder';
-import mcDataLoader, { IndexedData } from 'minecraft-data';
+import { BotOptions } from 'mineflayer';
 import { loadFarmerConfig } from '../configs';
 import { Field } from '../types/farmer';
-import {
-  BehaviorIdle,
-  BotStateMachine,
-  NestedStateMachine,
-  StateMachineWebserver,
-  StateTransition,
-} from 'mineflayer-statemachine';
-import { loadFarmingStateMachine } from '../state_machines/farming';
+import { loadFarmingStateMachine } from '../state_machines/farmer';
 import { BotBase } from '../BotBase';
 
 export class BotFarmer extends BotBase {
@@ -18,8 +9,7 @@ export class BotFarmer extends BotBase {
   fields: Field[];
   isFarming: boolean;
   harvestThreshold: number;
-  stateMachine: BotStateMachine;
-  stateMachineServer: StateMachineWebserver;
+  stateMachine;
 
   constructor(options: BotOptions) {
     super(options);
@@ -31,30 +21,19 @@ export class BotFarmer extends BotBase {
 
     const config = loadFarmerConfig(options.username);
 
-    const behaviorIdle = new BehaviorIdle();
-    behaviorIdle.stateName = 'Idle';
-
-    const farmingStateMachine = loadFarmingStateMachine(this.bot, config);
-    farmingStateMachine.stateName = 'Farm';
-
-    const rootStateMachine = new NestedStateMachine(
-      [
-        // behaviorIdle => behaviorCheckFields
-        new StateTransition({
-          parent: behaviorIdle,
-          child: farmingStateMachine,
-        }),
-      ],
-      behaviorIdle,
-    );
-    rootStateMachine.stateName = 'Root';
-    this.stateMachine = new BotStateMachine(this.bot, rootStateMachine);
-    this.stateMachineServer = new StateMachineWebserver(
-      this.bot,
-      this.stateMachine,
-    );
-    this.stateMachineServer.startServer();
+    this.stateMachine = this.loadStateMachines([
+      loadFarmingStateMachine(this.bot, config),
+    ]);
 
     this.fields = config.fields;
+
+    this.bot.once('spawn', () => {
+      // trigger farming enter state
+      this.stateMachine.transitions
+        .find((transition) => {
+          return transition.name === 'behaviorIdle => Farm';
+        })
+        ?.trigger();
+    });
   }
 }

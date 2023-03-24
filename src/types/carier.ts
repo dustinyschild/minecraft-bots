@@ -1,9 +1,9 @@
-import { Coordinate } from '.';
+import { Coordinate, DepositChest } from '.';
 
 export interface CarrierConfig {
   standByPosition: Coordinate;
-  withdrawalChests: Coordinate[];
-  depositChest: Coordinate;
+  withdrawalChests: DepositChest[];
+  depositChests: DepositChest[];
 }
 
 export interface CarrierConfigs {

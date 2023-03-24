@@ -1,5 +1,4 @@
 import { readFileSync } from 'fs';
-import { BaseConfigs } from '../types/base';
 import { CarrierConfigs } from '../types/carier';
 import { FarmerConfigs } from '../types/farmer';
 import { SorterConfigs } from '../types/sorter';
@@ -8,14 +7,6 @@ import { SorterConfigs } from '../types/sorter';
 import _farmersConfig from './farmers.json';
 import _sortersConfig from './sorters.json';
 import _carriersConfig from './carriers.json';
-
-export const loadBaseConfig = (username: string) => {
-  const farmerData = readFileSync(`${__dirname}/base.json`);
-
-  const config = JSON.parse(farmerData.toString('utf-8')) as BaseConfigs;
-
-  return config[username];
-};
 
 export const loadFarmerConfig = (username: string) => {
   const farmerData = readFileSync(`${__dirname}/farmers.json`);

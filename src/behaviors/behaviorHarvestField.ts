@@ -37,6 +37,11 @@ export class BehaviorHarvestField implements StateBehavior {
     this.finished = true;
   };
 
+  onStateExited = () => {
+    this.targets.item.fieldToSow = this.targets.item.fieldToHarvest;
+    this.targets.item.fieldToHarvest = null;
+  };
+
   getXRange = (boundary: Boundary) => {
     const [startPosition, endPosition] = boundary;
     const [startX] = startPosition;
@@ -75,8 +80,6 @@ export class BehaviorHarvestField implements StateBehavior {
   };
 
   getFarmableBlocks = (field: Field) => {
-    console.log(this.targets.item.fieldToHarvest);
-
     return this.getBlocksIn(field.boundary).filter(({ position }) => {
       const { x, y, z } = position;
       return this.bot.blockAt(new Vec3(x, y - 1, z))?.name === 'farmland';
@@ -97,7 +100,7 @@ export class BehaviorHarvestField implements StateBehavior {
 
       await this.harvestBlock(block);
 
-      await asyncTimeout(300);
+      await asyncTimeout(500);
 
       // look for drops within 5 block radius
       const drops = Object.values(this.bot.entities).filter(

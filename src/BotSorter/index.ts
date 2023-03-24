@@ -6,10 +6,17 @@ import { registerCommands } from '../modules/chat';
 import { writeFile } from 'fs/promises';
 import { loadSorterConfig } from '../configs';
 import { Coordinate } from '../types';
+import {
+  BehaviorIdle,
+  BotStateMachine,
+  NestedStateMachine,
+  StateTransition,
+} from 'mineflayer-statemachine';
 
 export class BotSorter {
   bot: Bot;
   mcData: IndexedData;
+  stateMachine: BotStateMachine;
   standByPosition: Coordinate;
   withdrawalPosition: Coordinate;
   depositChests: {
@@ -34,6 +41,15 @@ export class BotSorter {
     this.standByPosition = config.standByPosition;
     this.withdrawalPosition = config.withdrawalPosition;
     this.depositChests = config.depositChests;
+
+    // placeholder
+    const behaviorIdle = new BehaviorIdle();
+    behaviorIdle.stateName = 'Idle';
+
+    const rootStateMachine = new NestedStateMachine([], behaviorIdle);
+    rootStateMachine.stateName = 'Root';
+
+    this.stateMachine = new BotStateMachine(this.bot, rootStateMachine);
 
     this.bot.once('spawn', async () => {
       registerCommands(this.bot, {
