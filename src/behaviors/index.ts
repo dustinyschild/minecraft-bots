@@ -4,6 +4,7 @@ export * from './behaviorCheckInventory';
 export * from './behaviorCompletedDeposit';
 export * from './behaviorCompletedHarvesting';
 export * from './behaviorCompletedSowing';
+export * from './behaviorCompletedStandBy';
 export * from './behaviorDepositItems';
 export * from './behaviorFollowPlayer';
 export * from './behaviorHarvestField';

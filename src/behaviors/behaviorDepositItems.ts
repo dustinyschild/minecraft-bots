@@ -21,6 +21,7 @@ export class BehaviorDepositItems implements StateBehavior {
 
   onStateEntered = async () => {
     this.finished = false;
+
     for (const chest of this.chests) {
       if (!this.hasItemsToDeposit(chest)) {
         continue;
@@ -34,7 +35,7 @@ export class BehaviorDepositItems implements StateBehavior {
         continue;
       }
 
-      await this.bot.pathfinder.goto(new goals.GoalNear(x, y, z, 3));
+      await this.bot.pathfinder.goto(new goals.GoalNear(x, y, z, 1));
 
       const openedChest = await this.bot.openContainer(block);
 
@@ -53,11 +54,13 @@ export class BehaviorDepositItems implements StateBehavior {
   };
 
   hasItemsToDeposit = (chest: DepositChest) => {
-    return this.bot.inventory.items().some((item) => {
+    const hasItemsToDeposit = this.bot.inventory.items().some((item) => {
       return chest.items.some((chestItem) => {
         return chestItem === item.name;
       });
     });
+
+    return hasItemsToDeposit;
   };
 
   // error cases?

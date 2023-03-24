@@ -5,7 +5,7 @@ import { Block } from 'prismarine-block';
 import { Vec3 } from 'vec3';
 import { asyncTimeout } from '../helpers';
 import { Boundary } from '../types';
-import { Field, SeedName } from '../types/farmer';
+import { Field } from '../types/farmer';
 
 export class BehaviorSowField implements StateBehavior {
   stateName: string = 'Sow Field';
@@ -31,7 +31,9 @@ export class BehaviorSowField implements StateBehavior {
       (block) => block.name === 'air',
     );
 
-    this.finished = await this.plantField(fieldBlocks, field.seed);
+    await this.plantField(fieldBlocks, field.seed);
+
+    this.finished = true;
   };
 
   getXRange = (boundary: Boundary) => {
@@ -71,22 +73,26 @@ export class BehaviorSowField implements StateBehavior {
     return fieldBlocks;
   };
 
-  plantField = async (sowableBlocks: Block[], seedName: SeedName) => {
+  plantField = async (sowableBlocks: Block[], seedName: string) => {
     const seedType = this.bot.registry.itemsByName[seedName].id as number;
 
     for (const block of sowableBlocks) {
-      if (this.noSeeds) {
+      await asyncTimeout(300);
+
+      if (this.bot.heldItem?.name !== seedName) {
         await this.bot.equip(seedType, 'hand').catch(() => {
           console.log('No more seeds');
 
-          return false;
+          this.noSeeds = true;
         });
       }
 
-      await this.plant(block);
+      if (this.noSeeds) {
+        break;
+      } else {
+        await this.plant(block);
+      }
     }
-
-    return true;
   };
 
   plant = async (block: Block) => {
@@ -98,9 +104,9 @@ export class BehaviorSowField implements StateBehavior {
       await this.bot.pathfinder.goto(
         new goals.GoalNearXZ(blockToSow.position.x, blockToSow.position.z, 1),
       );
-      await this.bot.placeBlock(blockToSow, new Vec3(0, 1, 0)).catch(() => {
+      await this.bot.placeBlock(blockToSow, new Vec3(0, 1, 0)).catch((err) => {
         // ignore block placement errors
-        this.noSeeds = true;
+        console.log(err.message);
       });
     }
   };

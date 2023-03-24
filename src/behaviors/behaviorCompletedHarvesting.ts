@@ -11,7 +11,6 @@ export class BehaviorCompletedHarvesting implements StateBehavior {
   }
 
   onStateEntered = () => {
-    this.targets.item.fieldToSow = this.targets.item.fieldToHarvest;
     this.targets.item.fieldToHarvest = null;
   };
 }

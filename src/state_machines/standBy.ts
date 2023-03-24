@@ -1,7 +1,11 @@
 import { Bot } from 'mineflayer';
 import { NestedStateMachine, StateTransition } from 'mineflayer-statemachine';
 import { Vec3 } from 'vec3';
-import { BehaviorStandBy, BehaviorWait } from '../behaviors';
+import {
+  BehaviorCompletedStandBy,
+  BehaviorStandBy,
+  BehaviorWait,
+} from '../behaviors';
 import { timeIn } from '../helpers';
 import { Coordinate } from '../types';
 
@@ -12,6 +16,7 @@ export const loadStandByStateMachine = (
 ) => {
   const behaviorWait = new BehaviorWait(waitTime);
   const behaviorStandBy = new BehaviorStandBy(bot, new Vec3(...position));
+  const behaviorStandByComplete = new BehaviorCompletedStandBy();
 
   const standByStateMachine = new NestedStateMachine(
     [
@@ -21,12 +26,22 @@ export const loadStandByStateMachine = (
         child: behaviorWait,
         shouldTransition: behaviorStandBy.isFinished,
         onTransition: () => {
-          console.log('Transitioning: behaviorStandBy => behaviorWait');
+          console.info('Transitioning: behaviorStandBy => behaviorWait');
+        },
+      }),
+      new StateTransition({
+        parent: behaviorWait,
+        child: behaviorStandByComplete,
+        shouldTransition: behaviorWait.isFinished,
+        onTransition: () => {
+          console.info(
+            'Transitioning: behaviorWait => behaviorStandByComplete',
+          );
         },
       }),
     ],
     behaviorStandBy,
-    behaviorWait,
+    behaviorStandByComplete,
   );
   standByStateMachine.stateName = 'Stand By';
 

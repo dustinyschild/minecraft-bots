@@ -161,7 +161,6 @@ export class BotSorter {
         return item.name === itemName;
       });
 
-      console.log(inventoryItems);
       if (depositChest) {
         for (let item of inventoryItems) {
           await depositChest.deposit(item.type, null, item.count);

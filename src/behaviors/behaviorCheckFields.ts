@@ -23,48 +23,51 @@ export class BehaviorCheckFields implements StateBehavior {
   }
 
   onStateEntered = () => {
+    let highestYield = 0;
+
     for (let field of this.fields) {
       const cropBlocks = this.getBlocksIn(field.boundary);
-
       const hasUnsownBlocks = this.hasUnsownBlocks(cropBlocks);
       const hasHarvestableBlocks = this.hasHarvestableBlocks(
         cropBlocks,
         field.maturity,
       );
 
-      // immediately start harvest if field is not at capacity
-      if (hasUnsownBlocks && hasHarvestableBlocks) {
+      if (!hasHarvestableBlocks) {
+        // skip field if no harvestable blocks
+        console.log(field.crop, 'field has no harvestable crops');
+
+        continue;
+      }
+
+      if (hasHarvestableBlocks && hasUnsownBlocks) {
+        // fields not at capacity take priority
+        console.log(field.crop, 'prioritized');
+
         this.targets.item.fieldToHarvest = field;
-        break;
-      } else if (hasUnsownBlocks && !hasHarvestableBlocks) {
         this.targets.item.fieldToSow = field;
         break;
       }
 
-      // skip harvest if no harvestable blocks
-      if (!hasHarvestableBlocks) {
-        console.log('no farmable blocks');
-
-        break;
-      }
-
-      // find farm with most harvestableBlocks
-      let highestYield = 0;
+      // find farm with highest yield first
       const farmableBlocks = this.getHarvestableBlocks(
         cropBlocks,
         field.maturity,
       );
-      const yieldRatio = this.getYieldableRatio(farmableBlocks);
+      const yieldRatio = this.getYieldRatio(farmableBlocks, field.maturity);
 
       if (yieldRatio >= this.harvestThreshold && yieldRatio > highestYield) {
         highestYield = yieldRatio;
         this.targets.item.fieldToHarvest = field;
+        this.targets.item.fieldToSow = field;
       }
     }
   };
 
-  getYieldableRatio = (fieldBlocks: Block[]) => {
-    const harvestableCrops = fieldBlocks.filter(this.readyToHarvest);
+  getYieldRatio = (fieldBlocks: Block[], maturity: number) => {
+    const harvestableCrops = fieldBlocks.filter((block) =>
+      this.readyToHarvest(block, maturity),
+    );
 
     return harvestableCrops.length / fieldBlocks.length;
   };
@@ -147,11 +150,5 @@ export class BehaviorCheckFields implements StateBehavior {
 
   shouldHarvest = () => {
     return !!this.targets.item.fieldToHarvest;
-  };
-
-  shouldSow = () => {
-    console.log(this.targets.item.fieldToSow);
-
-    return !this.shouldHarvest() && !!this.targets.item.fieldToSow;
   };
 }

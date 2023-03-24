@@ -29,11 +29,15 @@ export class BotFarmer extends BotBase {
 
     this.bot.once('spawn', () => {
       // trigger farming enter state
-      this.stateMachine.transitions
-        .find((transition) => {
-          return transition.name === 'behaviorIdle => Farm';
-        })
-        ?.trigger();
+      setTimeout(
+        () =>
+          this.stateMachine.transitions
+            .find((transition) => {
+              return transition.name === 'behaviorIdle => Farm';
+            })
+            ?.trigger(),
+        3000,
+      );
     });
   }
 }

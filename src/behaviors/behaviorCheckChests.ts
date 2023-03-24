@@ -24,7 +24,6 @@ export class BehaviorCheckChests implements StateBehavior {
   onStateEntered = async () => {
     this.finished = false;
     this.itemsFound = false;
-    console.log('Looking for:', this.targets.item.lookingFor);
 
     const chestsWithItem = this.chests.filter((chest) => {
       return chest.items?.some((item) => item === this.targets.item.lookingFor);
@@ -41,19 +40,12 @@ export class BehaviorCheckChests implements StateBehavior {
         const chestItemCount = openedChest
           .containerItems()
           .reduce((count, item) => {
-            console.log(item.count);
-
             if (item.name === this.targets.item.lookingFor) {
               return count + item.count;
             }
 
             return count;
           }, 0);
-
-        console.log(
-          this.targets.item.lookingFor,
-          this.bot.registry.itemsByName[this.targets.item.lookingFor],
-        );
 
         await openedChest.withdraw(
           this.bot.registry.itemsByName[this.targets.item.lookingFor].id,

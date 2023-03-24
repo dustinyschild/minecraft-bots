@@ -7,6 +7,7 @@
           [-13, -60, 37],
           [-5, -60, 45]
         ],
+        "block": "wheat",
         "crop": "wheat",
         "seed": "wheat_seeds",
         "maturity": 7,
@@ -26,13 +27,14 @@
           [-3, -60, 35],
           [5, -60, 45]
         ],
+        "block": "carrots",
         "crop": "carrot",
         "seed": "carrot",
         "maturity": 7,
         "depositChests": [
           {
             "position": [-4, -60, 35],
-            "items": ["carrots"]
+            "items": ["carrot"]
           }
         ]
       },
@@ -41,13 +43,14 @@
           [7, -60, 37],
           [15, -60, 45]
         ],
+        "block": "beetroots",
         "crop": "beetroot",
         "seed": "beetroot_seeds",
         "maturity": 3,
         "depositChests": [
           {
             "position": [6, -60, 35],
-            "items": ["beetroots"]
+            "items": ["beetroot"]
           },
           {
             "position": [7, -60, 35],
@@ -60,6 +63,7 @@
           [17, -60, 37],
           [25, -60, 45]
         ],
+        "block": "potatoes",
         "crop": "potato",
         "seed": "potato",
         "maturity": 7,

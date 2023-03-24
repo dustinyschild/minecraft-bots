@@ -4,10 +4,8 @@ import {
   StateTransition,
   NestedStateMachine,
 } from 'mineflayer-statemachine';
-import { Vec3 } from 'vec3';
 import {
   BehaviorWait,
-  BehaviorStandBy,
   BehaviorCheckFields,
   BehaviorHarvestField,
   BehaviorSowField,
@@ -31,20 +29,13 @@ export const loadFarmingStateMachine = (bot: Bot, config: FarmerConfig) => {
       lookingFor: null,
     },
   };
-
   const farmChests = Object.values(config.fields)
     .map((field) => field.depositChests)
     .flat();
-
   const standByStateMachine = loadStandByStateMachine(
     bot,
     config.standByPosition,
     timeIn.minutes(1),
-  );
-  const behaviorWait = new BehaviorWait(timeIn.minutes(1));
-  const behaviorStandBy = new BehaviorStandBy(
-    bot,
-    new Vec3(...config.standByPosition),
   );
   const behaviorCheckFields = new BehaviorCheckFields(
     bot,
@@ -52,7 +43,7 @@ export const loadFarmingStateMachine = (bot: Bot, config: FarmerConfig) => {
     config.fields,
   );
   const behaviorHarvestField = new BehaviorHarvestField(bot, targets);
-  const behaviorWaitForDrops = new BehaviorWait(timeIn.seconds(1));
+  const behaviorWaitForDrops = new BehaviorWait(timeIn.seconds(2));
   behaviorWaitForDrops.stateName = 'Wait for Drops';
   const behaviorCheckHasSeeds = new BehaviorCheckInventory(
     bot,
@@ -79,15 +70,10 @@ export const loadFarmingStateMachine = (bot: Bot, config: FarmerConfig) => {
     bot,
     targets,
     (itemName) => {
-      return [
-        'wheat',
-        'wheat_seeds',
-        'carrot',
-        'beetroot',
-        'beetroot_seeds',
-        'potato',
-        'poisonous_potato',
-      ].some((item) => item === itemName);
+      return farmChests
+        .map((chest) => chest.items)
+        .flat()
+        .some((item) => item === itemName);
     },
   );
   const behaviorDepositCompleted = new BehaviorCompletedDeposit();
@@ -100,7 +86,7 @@ export const loadFarmingStateMachine = (bot: Bot, config: FarmerConfig) => {
         child: behaviorWaitForDrops,
         shouldTransition: behaviorHarvestField.isFinished,
         onTransition: () => {
-          console.log(
+          console.info(
             'Transitioning: behaviorHarvestField => behaviorWaitForDrops',
           );
         },
@@ -111,7 +97,7 @@ export const loadFarmingStateMachine = (bot: Bot, config: FarmerConfig) => {
         child: behaviorHarvestingCompleted,
         shouldTransition: behaviorWaitForDrops.isFinished,
         onTransition: () => {
-          console.log(
+          console.info(
             'Transitioning: behaviorWaitForDrops => behaviorHarvestingCompleted',
           );
         },
@@ -130,7 +116,7 @@ export const loadFarmingStateMachine = (bot: Bot, config: FarmerConfig) => {
         child: behaviorSowField,
         shouldTransition: behaviorCheckHasSeeds.hasItems,
         onTransition: () => {
-          console.log(
+          console.info(
             'Transitioning: behaviorCheckHasSeeds => behaviorSowField',
           );
         },
@@ -141,7 +127,7 @@ export const loadFarmingStateMachine = (bot: Bot, config: FarmerConfig) => {
         child: behaviorCheckChestsForSeeds,
         shouldTransition: () => !behaviorCheckHasSeeds.hasItems(),
         onTransition: () => {
-          console.log(
+          console.info(
             'Transitioning: behaviorCheckHasSeeds => behaviorCheckChestsForSeeds',
           );
 
@@ -159,7 +145,7 @@ export const loadFarmingStateMachine = (bot: Bot, config: FarmerConfig) => {
           );
         },
         onTransition: () => {
-          console.log(
+          console.info(
             'Transitioning: behaviorCheckChestsForSeeds => behaviorSowField',
           );
         },
@@ -170,7 +156,7 @@ export const loadFarmingStateMachine = (bot: Bot, config: FarmerConfig) => {
         child: behaviorCheckChestsForSeeds,
         shouldTransition: behaviorSowField.outOfSeeds,
         onTransition: () => {
-          console.log(
+          console.info(
             'Transitioning: behaviorSowField => behaviorCheckChestsForSeeds',
           );
 
@@ -183,9 +169,7 @@ export const loadFarmingStateMachine = (bot: Bot, config: FarmerConfig) => {
         child: behaviorSowingCompleted,
         shouldTransition: behaviorSowField.isFinished,
         onTransition: () => {
-          console.log(behaviorSowField.isFinished());
-
-          console.log(
+          console.info(
             'Transitioning: behaviorSowField => behaviorSowingCompleted',
           );
         },
@@ -201,7 +185,7 @@ export const loadFarmingStateMachine = (bot: Bot, config: FarmerConfig) => {
           );
         },
         onTransition: () => {
-          console.log(
+          console.info(
             'Transitioning: behaviorCheckChestsForSeeds => behaviorSowingCompleted',
           );
         },
@@ -220,7 +204,7 @@ export const loadFarmingStateMachine = (bot: Bot, config: FarmerConfig) => {
         child: behaviorDepositItems,
         shouldTransition: behaviorCheckHasItems.hasItems,
         onTransition: () => {
-          console.log(
+          console.info(
             'Transitioning: behaviorCheckHasItems => behaviorDepositItems',
           );
         },
@@ -229,9 +213,9 @@ export const loadFarmingStateMachine = (bot: Bot, config: FarmerConfig) => {
         name: 'behaviorCheckHasItems => behaviorDepositCompleted',
         parent: behaviorCheckHasItems,
         child: behaviorDepositCompleted,
-        shouldTransition: behaviorCheckHasItems.hasItems,
+        shouldTransition: () => !behaviorCheckHasItems.hasItems(),
         onTransition: () => {
-          console.log(
+          console.info(
             'Transitioning: behaviorCheckHasItems => behaviorDepositCompleted',
           );
         },
@@ -242,13 +226,14 @@ export const loadFarmingStateMachine = (bot: Bot, config: FarmerConfig) => {
         child: behaviorDepositCompleted,
         shouldTransition: behaviorDepositItems.isFinished,
         onTransition: () => {
-          console.log(
+          console.info(
             'Transitioning: behaviorDepositItems => behaviorDepositCompleted',
           );
         },
       }),
     ],
     behaviorCheckHasItems,
+    behaviorDepositCompleted,
   );
   depositItemsStateMachine.stateName = 'Deposit Items';
 
@@ -259,7 +244,7 @@ export const loadFarmingStateMachine = (bot: Bot, config: FarmerConfig) => {
       child: behaviorCheckFields,
       shouldTransition: () => standByStateMachine.isFinished(),
       onTransition: () => {
-        console.log(
+        console.info(
           'Transitioning: standByStateMachine => behaviorCheckFields',
         );
       },
@@ -268,14 +253,9 @@ export const loadFarmingStateMachine = (bot: Bot, config: FarmerConfig) => {
       name: 'behaviorCheckFields => standByStateMachine',
       parent: behaviorCheckFields,
       child: standByStateMachine,
-      shouldTransition: () => {
-        return (
-          !behaviorCheckFields.shouldHarvest() &&
-          !behaviorCheckFields.shouldSow()
-        );
-      },
+      shouldTransition: () => !behaviorCheckFields.shouldHarvest(),
       onTransition: () => {
-        console.log(
+        console.info(
           'Transitioning: behaviorCheckFields => standByStateMachine',
         );
       },
@@ -286,18 +266,9 @@ export const loadFarmingStateMachine = (bot: Bot, config: FarmerConfig) => {
       child: harvestingStateMachine,
       shouldTransition: behaviorCheckFields.shouldHarvest,
       onTransition: () => {
-        console.log(
+        console.info(
           'Transitioning: behaviorCheckFields => behaviorHarvestField',
         );
-      },
-    }),
-    new StateTransition({
-      name: 'behaviorCheckFields => sowingStateMachine',
-      parent: behaviorCheckFields,
-      child: sowingStateMachine,
-      shouldTransition: behaviorCheckFields.shouldSow,
-      onTransition: () => {
-        console.log('Transitioning: behaviorCheckFields => sowingStateMachine');
       },
     }),
     new StateTransition({
@@ -306,8 +277,8 @@ export const loadFarmingStateMachine = (bot: Bot, config: FarmerConfig) => {
       child: sowingStateMachine,
       shouldTransition: () => harvestingStateMachine.isFinished(),
       onTransition: () => {
-        console.log(
-          'Transitioning: behaviorWaitForDrops => sowingStateMachine',
+        console.info(
+          'Transitioning: harvestStateMachine => sowingStateMachine',
         );
       },
     }),
@@ -317,7 +288,7 @@ export const loadFarmingStateMachine = (bot: Bot, config: FarmerConfig) => {
       child: depositItemsStateMachine,
       shouldTransition: () => sowingStateMachine.isFinished(),
       onTransition: () => {
-        console.log(
+        console.info(
           'Transitioning: sowingStateMachine => depositItemsStateMachine',
         );
       },
@@ -328,7 +299,7 @@ export const loadFarmingStateMachine = (bot: Bot, config: FarmerConfig) => {
       child: behaviorCheckFields,
       shouldTransition: () => depositItemsStateMachine.isFinished(),
       onTransition: () => {
-        console.log(
+        console.info(
           'Transitioning: depositItemsStateMachine => behaviorCheckFields',
         );
       },
