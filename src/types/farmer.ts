@@ -1,29 +1,21 @@
-import { Boundary, Coordinate } from '.';
-
-export const enum CropType {
-  WHEAT = 'wheat',
-  CARROTS = 'carrots',
-  BEETROOTS = 'beetroots',
-  POTATOES = 'potatoes',
-}
+import { Boundary, Coordinate, DepositChest } from '.';
 
 export interface Farm {
   boundary: Boundary;
-  crop: CropType;
-  yieldChest: Coordinate;
-  seedChest: Coordinate;
-  discardChest?: Coordinate;
+  crop: string;
 }
 
 export interface Field {
   boundary: [Coordinate, Coordinate];
-  crop: CropType;
-  yieldChest: Coordinate;
-  seedChest: Coordinate;
-  discardChest?: Coordinate;
+  block: string;
+  crop: string;
+  seed: string;
+  maturity: number;
+  depositChests: DepositChest[];
 }
 
 export interface FarmerConfig {
+  standByPosition: Coordinate;
   fields: Field[];
 }
 

@@ -16,3 +16,15 @@ export interface ItemRegistry {
     stackSize: number;
   };
 }
+
+export interface WithdrawalChest {
+  position: Coordinate;
+  items?: string[];
+}
+
+export interface DepositChest {
+  position: Coordinate;
+  items: string[];
+}
+
+export type BotChest = WithdrawalChest | DepositChest;

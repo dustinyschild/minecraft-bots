@@ -6,11 +6,20 @@ import { ItemRegistry } from '../types';
 import { registerCommands } from '../modules/chat';
 import { Entity } from 'prismarine-entity';
 import { asyncTimeout, timeIn } from '../helpers';
+import {
+  BehaviorIdle,
+  BotStateMachine,
+  EntityFilters,
+  NestedStateMachine,
+  StateMachineWebserver,
+  StateTransition,
+} from 'mineflayer-statemachine';
 
-export class BotBase {
+export abstract class BotBase {
   bot: Bot;
   mcData: IndexedData;
   movements: Movements;
+  abstract stateMachine: BotStateMachine;
 
   constructor(options: BotOptions) {
     this.bot = createBot(options);
@@ -86,9 +95,48 @@ export class BotBase {
           }
         },
         sleep: this.sleep,
+        come: (username) => {
+          const player = Object.values(this.bot.entities).find((entity) => {
+            return (
+              EntityFilters().PlayersOnly(entity) &&
+              entity.username === username
+            );
+          });
+
+          if (player) {
+            const { x, y, z } = player.position;
+            this.bot.pathfinder.goto(new goals.GoalNear(x, y, z, 1));
+          } else {
+            this.bot.whisper(username, 'Out of range.');
+          }
+        },
       });
     });
   }
+
+  loadStateMachines = (stateMachines: NestedStateMachine[]) => {
+    // root state machine
+    const behaviorIdle = new BehaviorIdle();
+    behaviorIdle.stateName = 'Idle';
+
+    const rootStateMachine = new NestedStateMachine(
+      stateMachines.map((stateMachine) => {
+        return new StateTransition({
+          name: `behaviorIdle => ${stateMachine.stateName}`,
+          parent: behaviorIdle,
+          child: stateMachine,
+          onTransition: () =>
+            console.log(
+              `Transitioning: behaviorIdle => ${stateMachine.stateName}`,
+            ),
+        });
+      }),
+      behaviorIdle,
+    );
+    rootStateMachine.stateName = 'Root';
+
+    return new BotStateMachine(this.bot, rootStateMachine);
+  };
 
   /** Methods */
   sleep = async () => {

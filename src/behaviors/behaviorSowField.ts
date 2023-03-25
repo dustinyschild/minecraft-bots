@@ -3,10 +3,9 @@ import { goals } from 'mineflayer-pathfinder';
 import { StateBehavior, StateMachineTargets } from 'mineflayer-statemachine';
 import { Block } from 'prismarine-block';
 import { Vec3 } from 'vec3';
-import { crops } from '../config';
 import { asyncTimeout } from '../helpers';
 import { Boundary } from '../types';
-import { CropType, Field } from '../types/farmer';
+import { Field } from '../types/farmer';
 
 export class BehaviorSowField implements StateBehavior {
   stateName: string = 'Sow Field';
@@ -14,6 +13,7 @@ export class BehaviorSowField implements StateBehavior {
   bot: Bot;
   targets: StateMachineTargets;
   finished: boolean = false;
+  noSeeds: boolean = false;
 
   constructor(bot: Bot, targets: StateMachineTargets) {
     this.bot = bot;
@@ -22,14 +22,16 @@ export class BehaviorSowField implements StateBehavior {
 
   onStateEntered = async () => {
     this.finished = false;
-    const field = this.targets.item.fieldToHarvest as Field;
+    this.noSeeds = false;
+
+    const field = this.targets.item.fieldToSow as Field;
 
     // filter empty blocks
     const fieldBlocks = this.getBlocksIn(field.boundary).filter(
       (block) => block.name === 'air',
     );
 
-    await this.plantField(fieldBlocks, field.crop);
+    await this.plantField(fieldBlocks, field.seed);
 
     this.finished = true;
   };
@@ -71,43 +73,49 @@ export class BehaviorSowField implements StateBehavior {
     return fieldBlocks;
   };
 
-  plantField = async (sowableBlocks: Block[], cropType: CropType) => {
-    let noSeeds = false;
+  plantField = async (sowableBlocks: Block[], seedName: string) => {
+    const seedType = this.bot.registry.itemsByName[seedName].id as number;
 
-    await this.bot.equip(crops[cropType].sowableItem, 'hand').catch(() => {
-      this.bot.chat(`I don't have seeds for ${cropType}`);
-      noSeeds = true;
-    });
+    for (const block of sowableBlocks) {
+      await asyncTimeout(300);
 
-    for (let block of sowableBlocks) {
-      if (noSeeds) return;
-
-      await asyncTimeout(100);
-
-      if (this.bot.heldItem?.type !== crops[cropType].sowableItem) {
-        await this.bot.equip(crops[cropType].sowableItem, 'hand').catch(() => {
+      if (this.bot.heldItem?.name !== seedName) {
+        await this.bot.equip(seedType, 'hand').catch(() => {
           console.log('No more seeds');
-          noSeeds = true;
+
+          this.noSeeds = true;
         });
       }
 
-      await this.plant(block);
+      if (this.noSeeds) {
+        break;
+      } else {
+        await this.plant(block);
+      }
     }
   };
 
   plant = async (block: Block) => {
-    const { x, y, z } = block.position;
-    const blockToSow = this.bot.blockAt(new Vec3(x, y - 1, z));
+    const blockToSow = this.bot.blockAt(
+      block.position.clone().translate(0, -1, 0),
+    );
 
     if (blockToSow?.name === 'farmland') {
       await this.bot.pathfinder.goto(
         new goals.GoalNearXZ(blockToSow.position.x, blockToSow.position.z, 1),
       );
-      await this.bot
-        .placeBlock(blockToSow, new Vec3(0, 1, 0))
-        .catch((err) => console.error(err));
+      await this.bot.placeBlock(blockToSow, new Vec3(0, 1, 0)).catch((err) => {
+        // ignore block placement errors
+        console.log(err.message);
+      });
     }
   };
 
-  isFinished = () => this.finished;
+  outOfSeeds = () => {
+    return this.noSeeds;
+  };
+
+  isFinished = () => {
+    return this.finished && !this.noSeeds;
+  };
 }

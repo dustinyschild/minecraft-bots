@@ -1,42 +1,82 @@
 {
   "farmer": {
+    "standByPosition": [-16, -60, 36],
     "fields": [
       {
         "boundary": [
-          [-13, -60, -13],
-          [-5, -60, 13]
+          [-13, -60, 37],
+          [-5, -60, 45]
         ],
+        "block": "wheat",
         "crop": "wheat",
-        "yieldChest": [-16, -60, -14],
-        "seedChest": [-16, -60, -13]
+        "seed": "wheat_seeds",
+        "maturity": 7,
+        "depositChests": [
+          {
+            "position": [-14, -60, 35],
+            "items": ["wheat"]
+          },
+          {
+            "position": [-13, -60, 35],
+            "items": ["wheat_seeds"]
+          }
+        ]
       },
       {
         "boundary": [
-          [-4, -60, -13],
-          [4, -60, 13]
+          [-3, -60, 35],
+          [5, -60, 45]
         ],
-        "crop": "carrots",
-        "yieldChest": [-16, -60, -15],
-        "seedChest": [-16, -60, -15]
+        "block": "carrots",
+        "crop": "carrot",
+        "seed": "carrot",
+        "maturity": 7,
+        "depositChests": [
+          {
+            "position": [-4, -60, 35],
+            "items": ["carrot"]
+          }
+        ]
       },
       {
         "boundary": [
-          [5, -60, -13],
-          [13, -60, 13]
+          [7, -60, 37],
+          [15, -60, 45]
         ],
-        "crop": "beetroots",
-        "yieldChest": [-16, -60, -12],
-        "seedChest": [-16, -60, -11]
+        "block": "beetroots",
+        "crop": "beetroot",
+        "seed": "beetroot_seeds",
+        "maturity": 3,
+        "depositChests": [
+          {
+            "position": [6, -60, 35],
+            "items": ["beetroot"]
+          },
+          {
+            "position": [7, -60, 35],
+            "items": ["beetroot_seeds"]
+          }
+        ]
       },
       {
         "boundary": [
-          [14, -60, -13],
-          [22, -60, 13]
+          [17, -60, 37],
+          [25, -60, 45]
         ],
-        "crop": "potatoes",
-        "yieldChest": [-16, -60, -10],
-        "seedChest": [-16, -60, -10],
-        "discardChest": [-16, -60, -9]
+        "block": "potatoes",
+        "crop": "potato",
+        "seed": "potato",
+        "maturity": 7,
+        "depositChests": [
+          {
+            "position": [16, -60, 35],
+            "items": ["potato"]
+          },
+          {
+            "position": [17, -60, 35],
+            "items": ["poisonous_potato"]
+          }
+        ]
       }
     ]
   }

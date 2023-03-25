@@ -5,7 +5,6 @@ import { StateBehavior, StateMachineTargets } from 'mineflayer-statemachine';
 import { Block } from 'prismarine-block';
 import { Boundary } from '../types';
 import { Vec3 } from 'vec3';
-import { crops } from '../config';
 import { Field } from '../types/farmer';
 import { asyncTimeout } from '../helpers';
 
@@ -15,15 +14,10 @@ export class BehaviorHarvestField implements StateBehavior {
   bot: Bot;
   targets: StateMachineTargets;
   finished: boolean = false;
-  harvestableCrops: { name: string; harvestableAge: number }[];
 
   constructor(bot: Bot, targets: StateMachineTargets) {
     this.bot = bot;
     this.targets = targets;
-
-    this.harvestableCrops = Object.entries(crops).map(
-      ([name, { harvestableAge }]) => ({ name, harvestableAge }),
-    );
   }
 
   onStateEntered = async () => {
@@ -75,8 +69,6 @@ export class BehaviorHarvestField implements StateBehavior {
   };
 
   getFarmableBlocks = (field: Field) => {
-    console.log(this.targets.item.fieldToHarvest);
-
     return this.getBlocksIn(field.boundary).filter(({ position }) => {
       const { x, y, z } = position;
       return this.bot.blockAt(new Vec3(x, y - 1, z))?.name === 'farmland';
@@ -84,9 +76,9 @@ export class BehaviorHarvestField implements StateBehavior {
   };
 
   isHarvestable = (block: Block) => {
-    return this.harvestableCrops.some(
-      (crop) =>
-        block.name === crop.name && block.metadata === crop.harvestableAge,
+    return (
+      block.name === this.targets.item.fieldToHarvest.block &&
+      block.metadata === this.targets.item.fieldToHarvest.maturity
     );
   };
 
@@ -97,7 +89,7 @@ export class BehaviorHarvestField implements StateBehavior {
 
       await this.harvestBlock(block);
 
-      await asyncTimeout(300);
+      await asyncTimeout(500);
 
       // look for drops within 5 block radius
       const drops = Object.values(this.bot.entities).filter(
@@ -108,7 +100,7 @@ export class BehaviorHarvestField implements StateBehavior {
 
       for (let drop of drops) {
         const { x, z } = drop.position;
-        await this.bot.pathfinder.goto(new goals.GoalNearXZ(x, z, 1));
+        await this.bot.pathfinder.goto(new goals.GoalNearXZ(x, z, 0));
       }
     }
   };
