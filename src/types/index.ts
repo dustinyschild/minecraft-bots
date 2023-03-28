@@ -1,11 +1,12 @@
-export type Coordinate = [number, number, number];
-
-export const enum BotType {
-  FARMER = 'farmer',
-  SORTER = 'sorter',
+export interface IServer {
+  host: string;
+  port: number;
+  version: string;
 }
 
-export type Boundary = [Coordinate, Coordinate];
+export type ICoordinate = [number, number, number];
+
+export type Boundary = [ICoordinate, ICoordinate];
 
 // helper type since this.bot.registry.itemsByName doesn't have type support
 export interface ItemRegistry {
@@ -17,14 +18,7 @@ export interface ItemRegistry {
   };
 }
 
-export interface WithdrawalChest {
-  position: Coordinate;
+export interface BotChest {
+  position: ICoordinate;
   items?: string[];
 }
-
-export interface DepositChest {
-  position: Coordinate;
-  items: string[];
-}
-
-export type BotChest = WithdrawalChest | DepositChest;

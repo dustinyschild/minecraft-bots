@@ -1,13 +1,13 @@
-import { Coordinate } from '.';
+import { ICoordinate } from '.';
 
 interface BotChest {
-  position: Coordinate;
+  position: ICoordinate;
   itemName: string;
 }
 
 export interface SorterConfig {
-  standByPosition: Coordinate;
-  withdrawalPosition: Coordinate;
+  standByPosition: ICoordinate;
+  withdrawalPosition: ICoordinate;
   depositChests: BotChest[];
 }
 

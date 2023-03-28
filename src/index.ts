@@ -1,34 +1,45 @@
+import * as dotenv from 'dotenv';
+
 import { StateMachineWebserver } from 'mineflayer-statemachine';
+import * as db from './db/connect';
 import { BotBase } from './BotBase';
 import { BotCarrier } from './BotCarrier';
 import { BotFarmer } from './BotFarmer';
 import { BotSorter } from './BotSorter';
+import { Bot, Farmer } from './db/schemas/bots';
+import { Server } from './db/schemas/servers';
+import { findOrCreateServer } from './db/daos/servers';
 
-const targetServer = {
-  host: 'localhost',
-  port: 25565,
-  version: '1.19.3',
-};
+(async () => {
+  dotenv.config();
 
-const workers = [
-  new BotFarmer({ ...targetServer, username: 'farmer' }),
-  // new BotSorter({ ...targetServer, username: 'sorter' }),
-  // new BotCarrier({ ...targetServer, username: 'randy' }),
-];
+  await db.connect();
 
-// load webservers
-workers.forEach((worker, i) => {
-  const port = 3000 + i;
+  const server = await findOrCreateServer({
+    host: process.env.HOST || 'localhost',
+    port: parseInt(process.env.PORT || '') || 25565,
+    version: process.env.version || '1.19.3',
+  });
 
-  const webserver = new StateMachineWebserver(
-    worker.bot,
-    worker.stateMachine,
-    port,
-  );
+  const bots = await Bot.find({ server: server._id });
+  const farmers = await Farmer.find({ server: server._id });
 
-  webserver.startServer();
+  console.log({ bots, farmers });
 
-  console.log(
-    `State machine viewer started for ${worker.bot.username} on http://localhost:${port}`,
-  );
-});
+  // load webservers
+  // workers.forEach((worker, i) => {
+  //   const port = 3000 + i;
+
+  //   const webserver = new StateMachineWebserver(
+  //     worker.bot,
+  //     worker.stateMachine,
+  //     port,
+  //   );
+
+  //   webserver.startServer();
+
+  //   console.log(
+  //     `State machine viewer started for ${worker.bot.username} on http://localhost:${port}`,
+  //   );
+  // });
+})();

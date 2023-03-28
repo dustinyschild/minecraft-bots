@@ -2,7 +2,7 @@ import { Bot } from 'mineflayer';
 import { goals } from 'mineflayer-pathfinder';
 import { StateBehavior, StateMachineTargets } from 'mineflayer-statemachine';
 import { Vec3 } from 'vec3';
-import { DepositChest } from '../types';
+import { BotChest } from '../types';
 
 export class BehaviorDepositItems implements StateBehavior {
   stateName: string = 'Check Chests';
@@ -11,9 +11,9 @@ export class BehaviorDepositItems implements StateBehavior {
 
   bot: Bot;
   targets: StateMachineTargets;
-  chests: DepositChest[];
+  chests: BotChest[];
 
-  constructor(bot: Bot, targets: StateMachineTargets, chests: DepositChest[]) {
+  constructor(bot: Bot, targets: StateMachineTargets, chests: BotChest[]) {
     this.bot = bot;
     this.targets = targets;
     this.chests = chests;
@@ -40,7 +40,7 @@ export class BehaviorDepositItems implements StateBehavior {
       const openedChest = await this.bot.openContainer(block);
 
       for (const item of this.bot.inventory.items()) {
-        if (chest.items.some((itemName) => itemName === item.name)) {
+        if (chest.items?.some((itemName) => itemName === item.name)) {
           await openedChest.deposit(item.type, null, item.count).catch(() => {
             // suppress failed deposit errors
           });
@@ -53,9 +53,9 @@ export class BehaviorDepositItems implements StateBehavior {
     this.finished = true;
   };
 
-  hasItemsToDeposit = (chest: DepositChest) => {
+  hasItemsToDeposit = (chest: BotChest) => {
     const hasItemsToDeposit = this.bot.inventory.items().some((item) => {
-      return chest.items.some((chestItem) => {
+      return chest.items?.some((chestItem) => {
         return chestItem === item.name;
       });
     });
