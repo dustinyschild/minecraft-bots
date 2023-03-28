@@ -1,7 +1,7 @@
 import { IServer } from '../../types';
 import { Server } from '../schemas/servers';
 
-export const findOrCreateServer = async (target: IServer) => {
+export const findOrCreate = async (target: IServer) => {
   let server = await Server.findOne({
     host: target.host,
     port: target.port,

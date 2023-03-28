@@ -1,6 +1,6 @@
 import { IServer } from '../types';
 import { connect, disconnect } from './connect';
-import { findOrCreateServer } from './daos/servers';
+import { findOrCreate } from './daos/servers';
 import { Bot, Farmer } from './schemas/bots';
 
 import * as dotenv from 'dotenv';
@@ -17,7 +17,7 @@ const logCreated = (bot: any) => {
 };
 
 const createBase = async () => {
-  const server = await findOrCreateServer(serverConfig);
+  const server = await findOrCreate(serverConfig);
 
   await Bot.create({
     username: 'jack_o_trades',
@@ -26,7 +26,7 @@ const createBase = async () => {
 };
 
 const createFarmer = async () => {
-  const server = await findOrCreateServer(serverConfig);
+  const server = await findOrCreate(serverConfig);
 
   await Farmer.create({
     username: 'farmer_john',
