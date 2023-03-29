@@ -1,12 +1,7 @@
-import { Boundary, ICoordinate, BotChest } from '.';
+import { IBoundary, ICoordinate, BotChest, IBot } from '.';
 
-export interface Farm {
-  boundary: Boundary;
-  crop: string;
-}
-
-export interface Field {
-  boundary: [ICoordinate, ICoordinate];
+export interface IField {
+  boundary: IBoundary;
   block: string;
   crop: string;
   seed: string;
@@ -14,11 +9,11 @@ export interface Field {
   depositChests: BotChest[];
 }
 
-export interface FarmerConfig {
+export interface IFarmer extends IBot {
   standByPosition: ICoordinate;
-  fields: Field[];
+  fields: IField[];
 }
 
 export interface FarmerConfigs {
-  [username: string]: FarmerConfig;
+  [username: string]: IFarmer;
 }

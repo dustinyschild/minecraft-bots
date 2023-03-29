@@ -1,5 +1,7 @@
-import { model, Schema } from 'mongoose';
-import { ICoordinate } from '../../types';
+import { Document, model, Schema } from 'mongoose';
+import { IBot } from '../../types';
+import { IFarmer, IField } from '../../types/farmer';
+import { Boundary } from '../schemaTypes/Boundary';
 import { Coordinate } from '../schemaTypes/Coordinate';
 
 const Chest = {
@@ -7,13 +9,12 @@ const Chest = {
   items: [String],
 };
 
-const botSchema = new Schema(
+export const botSchema = new Schema(
   {
     username: { type: String, required: true },
     type: {
       type: String,
-      enum: ['none', 'farmer', 'sorter', 'courier', 'carrier'],
-      default: 'none',
+      enum: ['farmer', 'sorter', 'courier', 'carrier'],
       required: true,
     },
     server: { type: Schema.Types.ObjectId, required: true },
@@ -21,13 +22,8 @@ const botSchema = new Schema(
   { discriminatorKey: 'type' },
 );
 
-export const Bot = model('Bot', botSchema);
-
 const fieldSchema = new Schema({
-  boundary: {
-    type: [Coordinate],
-    validate: (props: ICoordinate[]) => props.length === 2,
-  },
+  boundary: { type: Boundary, required: true },
   block: {
     type: String,
     enum: ['wheat', 'carrots', 'beetroots', 'potatoes'],
@@ -50,12 +46,10 @@ const fieldSchema = new Schema({
   },
 });
 
-const farmerSchema = new Schema({
+export const farmerSchema = new Schema({
   standByPosition: { type: Coordinate, required: true },
   fields: {
     type: [fieldSchema],
     default: [],
   },
 });
-
-export const Farmer = Bot.discriminator('farmer', farmerSchema);

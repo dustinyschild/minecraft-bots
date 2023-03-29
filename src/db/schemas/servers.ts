@@ -1,7 +1,6 @@
-import { model, Schema } from 'mongoose';
-import { IServer } from '../../types';
+import { Schema } from 'mongoose';
 
-const serverSchema = new Schema<IServer>({
+export const serverSchema = new Schema({
   host: {
     type: String,
     default: 'localhost',
@@ -17,5 +16,3 @@ const serverSchema = new Schema<IServer>({
     required: true,
   },
 });
-
-export const Server = model<IServer>('Server', serverSchema);

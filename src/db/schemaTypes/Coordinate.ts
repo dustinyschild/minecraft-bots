@@ -1,12 +1,13 @@
 import { Schema, SchemaType } from 'mongoose';
+import { ICoordinate } from '../../types';
 
 export class Coordinate extends SchemaType {
-  cast = (vectors: number[]) => {
-    if (vectors.length !== 3) {
-      throw new Error('Coordinate must have 3 values');
+  cast = (vector: ICoordinate) => {
+    if (vector.length !== 3) {
+      throw new Error('Coordinate must have exactly 3 values');
     }
 
-    return vectors;
+    return vector;
   };
 }
 
