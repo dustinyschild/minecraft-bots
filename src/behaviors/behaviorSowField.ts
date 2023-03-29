@@ -4,8 +4,8 @@ import { StateBehavior, StateMachineTargets } from 'mineflayer-statemachine';
 import { Block } from 'prismarine-block';
 import { Vec3 } from 'vec3';
 import { asyncTimeout } from '../helpers';
-import { Boundary } from '../types';
-import { Field } from '../types/farmer';
+import { IBoundary } from '../types';
+import { IField } from '../types/farmer';
 
 export class BehaviorSowField implements StateBehavior {
   stateName: string = 'Sow Field';
@@ -24,7 +24,7 @@ export class BehaviorSowField implements StateBehavior {
     this.finished = false;
     this.noSeeds = false;
 
-    const field = this.targets.item.fieldToSow as Field;
+    const field = this.targets.item.fieldToSow as IField;
 
     // filter empty blocks
     const fieldBlocks = this.getBlocksIn(field.boundary).filter(
@@ -36,7 +36,7 @@ export class BehaviorSowField implements StateBehavior {
     this.finished = true;
   };
 
-  getXRange = (boundary: Boundary) => {
+  getXRange = (boundary: IBoundary) => {
     const [startPosition, endPosition] = boundary;
     const [startX] = startPosition;
     const [endX] = endPosition;
@@ -47,7 +47,7 @@ export class BehaviorSowField implements StateBehavior {
     return [smallerX, biggerX];
   };
 
-  getZRange = (boundary: Boundary) => {
+  getZRange = (boundary: IBoundary) => {
     const [startPosition, endPosition] = boundary;
     const [, , startZ] = startPosition;
     const [, , endZ] = endPosition;
@@ -58,7 +58,7 @@ export class BehaviorSowField implements StateBehavior {
     return [smallerZ, biggerZ];
   };
 
-  getBlocksIn = (boundary: Boundary): Block[] => {
+  getBlocksIn = (boundary: IBoundary): Block[] => {
     const [startX, endX] = this.getXRange(boundary);
     const [startZ, endZ] = this.getZRange(boundary);
 

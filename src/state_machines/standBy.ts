@@ -7,11 +7,11 @@ import {
   BehaviorWait,
 } from '../behaviors';
 import { timeIn } from '../helpers';
-import { Coordinate } from '../types';
+import { ICoordinate } from '../types';
 
 export const loadStandByStateMachine = (
   bot: Bot,
-  position: Coordinate,
+  position: ICoordinate,
   waitTime: number,
 ) => {
   const behaviorWait = new BehaviorWait(waitTime);

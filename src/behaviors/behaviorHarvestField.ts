@@ -3,9 +3,9 @@ import { goals } from 'mineflayer-pathfinder';
 import { uniqBy } from 'lodash';
 import { StateBehavior, StateMachineTargets } from 'mineflayer-statemachine';
 import { Block } from 'prismarine-block';
-import { Boundary } from '../types';
+import { IBoundary } from '../types';
 import { Vec3 } from 'vec3';
-import { Field } from '../types/farmer';
+import { IField } from '../types/farmer';
 import { asyncTimeout } from '../helpers';
 
 export class BehaviorHarvestField implements StateBehavior {
@@ -31,7 +31,7 @@ export class BehaviorHarvestField implements StateBehavior {
     this.finished = true;
   };
 
-  getXRange = (boundary: Boundary) => {
+  getXRange = (boundary: IBoundary) => {
     const [startPosition, endPosition] = boundary;
     const [startX] = startPosition;
     const [endX] = endPosition;
@@ -42,7 +42,7 @@ export class BehaviorHarvestField implements StateBehavior {
     return [smallerX, biggerX];
   };
 
-  getZRange = (boundary: Boundary) => {
+  getZRange = (boundary: IBoundary) => {
     const [startPosition, endPosition] = boundary;
     const [, , startZ] = startPosition;
     const [, , endZ] = endPosition;
@@ -53,7 +53,7 @@ export class BehaviorHarvestField implements StateBehavior {
     return [smallerZ, biggerZ];
   };
 
-  getBlocksIn = (boundary: Boundary): Block[] => {
+  getBlocksIn = (boundary: IBoundary): Block[] => {
     const [startX, endX] = this.getXRange(boundary);
     const [startZ, endZ] = this.getZRange(boundary);
 
@@ -68,7 +68,7 @@ export class BehaviorHarvestField implements StateBehavior {
     return fieldBlocks;
   };
 
-  getFarmableBlocks = (field: Field) => {
+  getFarmableBlocks = (field: IField) => {
     return this.getBlocksIn(field.boundary).filter(({ position }) => {
       const { x, y, z } = position;
       return this.bot.blockAt(new Vec3(x, y - 1, z))?.name === 'farmland';

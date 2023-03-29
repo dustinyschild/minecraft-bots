@@ -5,13 +5,11 @@ import { Vec3 } from 'vec3';
 import { ItemRegistry } from '../types';
 import { registerCommands } from '../modules/chat';
 import { Entity } from 'prismarine-entity';
-import { asyncTimeout, timeIn } from '../helpers';
 import {
   BehaviorIdle,
   BotStateMachine,
   EntityFilters,
   NestedStateMachine,
-  StateMachineWebserver,
   StateTransition,
 } from 'mineflayer-statemachine';
 

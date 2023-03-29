@@ -18,5 +18,5 @@
     "moduleResolution": "node",
     "resolveJsonModule": true
   },
-  "include": ["./src/**/*.ts", "__tests__/**/*.ts"]
+  "include": ["./src/**/*.ts", "./global.d.ts"]
 }

@@ -2,19 +2,19 @@ import { Bot } from 'mineflayer';
 import { StateBehavior, StateMachineTargets } from 'mineflayer-statemachine';
 import { Vec3 } from 'vec3';
 import { Block } from 'prismarine-block';
-import { Boundary } from '../types';
-import { Field } from '../types/farmer';
+import { IBoundary } from '../types';
+import { IField } from '../types/farmer';
 
 export class BehaviorCheckFields implements StateBehavior {
   stateName: string = 'Check Fields';
   active: boolean = false;
 
   targets: StateMachineTargets;
-  fields: Field[];
+  fields: IField[];
   bot: Bot;
   harvestThreshold: number;
 
-  constructor(bot: Bot, targets: StateMachineTargets, fields: Field[]) {
+  constructor(bot: Bot, targets: StateMachineTargets, fields: IField[]) {
     this.bot = bot;
     this.targets = targets;
     this.fields = fields;
@@ -72,7 +72,7 @@ export class BehaviorCheckFields implements StateBehavior {
     return harvestableCrops.length / fieldBlocks.length;
   };
 
-  getXRange = (boundary: Boundary) => {
+  getXRange = (boundary: IBoundary) => {
     const [startPosition, endPosition] = boundary;
     const [startX] = startPosition;
     const [endX] = endPosition;
@@ -83,7 +83,7 @@ export class BehaviorCheckFields implements StateBehavior {
     return [smallerX, biggerX];
   };
 
-  getZRange = (boundary: Boundary) => {
+  getZRange = (boundary: IBoundary) => {
     const [startPosition, endPosition] = boundary;
     const [, , startZ] = startPosition;
     const [, , endZ] = endPosition;
@@ -94,7 +94,7 @@ export class BehaviorCheckFields implements StateBehavior {
     return [smallerZ, biggerZ];
   };
 
-  getBlocksIn = (boundary: Boundary): Block[] => {
+  getBlocksIn = (boundary: IBoundary): Block[] => {
     const [startX, endX] = this.getXRange(boundary);
     const [startZ, endZ] = this.getZRange(boundary);
 

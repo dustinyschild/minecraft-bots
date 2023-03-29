@@ -1,24 +1,19 @@
-import { Boundary, Coordinate, DepositChest } from '.';
+import { IBoundary, ICoordinate, BotChest, IBot } from '.';
 
-export interface Farm {
-  boundary: Boundary;
-  crop: string;
-}
-
-export interface Field {
-  boundary: [Coordinate, Coordinate];
+export interface IField {
+  boundary: IBoundary;
   block: string;
   crop: string;
   seed: string;
   maturity: number;
-  depositChests: DepositChest[];
+  depositChests: BotChest[];
 }
 
-export interface FarmerConfig {
-  standByPosition: Coordinate;
-  fields: Field[];
+export interface IFarmer extends IBot {
+  standByPosition: ICoordinate;
+  fields: IField[];
 }
 
 export interface FarmerConfigs {
-  [username: string]: FarmerConfig;
+  [username: string]: IFarmer;
 }

@@ -1,11 +1,20 @@
-export type Coordinate = [number, number, number];
+import mongoose from 'mongoose';
 
-export const enum BotType {
-  FARMER = 'farmer',
-  SORTER = 'sorter',
+export interface IServer {
+  host: string;
+  port: number;
+  version: string;
 }
 
-export type Boundary = [Coordinate, Coordinate];
+export interface IBot {
+  username: string;
+  type: 'none' | 'farmer' | 'sorter' | 'courier' | 'carrier';
+  server: mongoose.Schema.Types.ObjectId;
+}
+
+export type ICoordinate = [number, number, number];
+
+export type IBoundary = [ICoordinate, ICoordinate];
 
 // helper type since this.bot.registry.itemsByName doesn't have type support
 export interface ItemRegistry {
@@ -17,14 +26,7 @@ export interface ItemRegistry {
   };
 }
 
-export interface WithdrawalChest {
-  position: Coordinate;
+export interface BotChest {
+  position: ICoordinate;
   items?: string[];
 }
-
-export interface DepositChest {
-  position: Coordinate;
-  items: string[];
-}
-
-export type BotChest = WithdrawalChest | DepositChest;

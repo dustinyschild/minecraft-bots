@@ -17,10 +17,10 @@ import {
   BehaviorCompletedDeposit,
 } from '../behaviors';
 import { timeIn } from '../helpers';
-import { FarmerConfig } from '../types/farmer';
+import { IFarmer } from '../types/farmer';
 import { loadStandByStateMachine } from './standBy';
 
-export const loadFarmingStateMachine = (bot: Bot, config: FarmerConfig) => {
+export const loadFarmingStateMachine = (bot: Bot, config: IFarmer) => {
   const targets: StateMachineTargets = {
     item: {
       waitUntilTime: null,

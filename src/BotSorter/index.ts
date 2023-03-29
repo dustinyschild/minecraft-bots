@@ -5,7 +5,7 @@ import { Vec3 } from 'vec3';
 import { registerCommands } from '../modules/chat';
 import { writeFile } from 'fs/promises';
 import { loadSorterConfig } from '../configs';
-import { Coordinate } from '../types';
+import { ICoordinate } from '../types';
 import {
   BehaviorIdle,
   BotStateMachine,
@@ -17,8 +17,8 @@ export class BotSorter {
   bot: Bot;
   mcData: IndexedData;
   stateMachine: BotStateMachine;
-  standByPosition: Coordinate;
-  withdrawalPosition: Coordinate;
+  standByPosition: ICoordinate;
+  withdrawalPosition: ICoordinate;
   depositChests: {
     position: [number, number, number];
     itemName: string;
