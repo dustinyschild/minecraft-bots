@@ -9,7 +9,9 @@
   },
   "dependencies": {
     "@types/lodash": "^4.14.191",
+    "bullmq": "^3.10.3",
     "dotenv": "^16.0.3",
+    "ioredis": "^5.3.1",
     "lodash": "^4.17.21",
     "mineflayer": "^4.8.1",
     "mineflayer-collectblock": "^1.4.1",

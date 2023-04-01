@@ -1,0 +1,18 @@
+name: minecraft_bot_infrastructure
+services:
+  minecraft_db:
+    image: mongo:latest
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb:/data/mc/db
+  minecraft_job_queue:
+    image: redis:latest
+    ports:
+      - 6379:6379
+    volumes:
+      - redis:/data/mc/redis
+
+volumes:
+  mongodb:
+  redis:
