@@ -3,7 +3,6 @@ import { Worker, Job } from 'bullmq';
 import { BotBase } from '../BotBase';
 import { loadCarrierConfig } from '../configs';
 import { QueueType } from '../types/queue';
-import { loadCarrierStateMachine } from '../state_machines/carrier';
 import { TransportJob } from '../state_machines/transport';
 import { timeIn } from '../helpers';
 

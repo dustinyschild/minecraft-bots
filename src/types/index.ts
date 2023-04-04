@@ -30,3 +30,12 @@ export interface BotChest {
   position: ICoordinate;
   items?: string[];
 }
+
+export type ChatCommand = (
+  username: string,
+  commandArgs: string[],
+) => Promise<void> | void;
+
+export interface BotCommandDictionary {
+  [command: string]: ChatCommand;
+}

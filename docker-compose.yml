@@ -1,18 +1,19 @@
-name: minecraft_bot_infrastructure
+name: minecraft_infra
 services:
   minecraft_db:
     image: mongo:latest
     ports:
       - 27017:27017
     volumes:
-      - mongodb:/data/mc/db
-  minecraft_job_queue:
+      - mongodb:/data/db
+  redis:
     image: redis:latest
     ports:
       - 6379:6379
     volumes:
-      - redis:/data/mc/redis
+      - redis:/data/redis
 
 volumes:
   mongodb:
   redis:
+    driver: local

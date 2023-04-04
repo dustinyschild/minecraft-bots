@@ -1,8 +1,6 @@
-import { Bot, BotOptions, createBot } from 'mineflayer';
-import mcDataLoader, { IndexedData } from 'minecraft-data';
-import { pathfinder, goals, Movements } from 'mineflayer-pathfinder';
+import { BotOptions } from 'mineflayer';
+import { goals } from 'mineflayer-pathfinder';
 import { Vec3 } from 'vec3';
-import { registerCommands } from '../modules/chat';
 import { writeFile } from 'fs/promises';
 import { loadSorterConfig } from '../configs';
 import { ICoordinate } from '../types';
@@ -12,10 +10,9 @@ import {
   NestedStateMachine,
   StateTransition,
 } from 'mineflayer-statemachine';
+import { BotBase } from '../BotBase';
 
-export class BotSorter {
-  bot: Bot;
-  mcData: IndexedData;
+export class BotSorter extends BotBase {
   stateMachine: BotStateMachine;
   standByPosition: ICoordinate;
   withdrawalPosition: ICoordinate;
@@ -28,12 +25,7 @@ export class BotSorter {
   shouldCheckChest: boolean = false;
 
   constructor(options: BotOptions) {
-    this.bot = createBot(options);
-    this.mcData = mcDataLoader(this.bot.version);
-
-    this.bot.loadPlugin(pathfinder);
-    const defaultMove = new Movements(this.bot, this.mcData);
-    this.bot.pathfinder.setMovements(defaultMove);
+    super(options);
 
     // will error if config can't be found.
     const config = loadSorterConfig(options.username);
@@ -52,7 +44,7 @@ export class BotSorter {
     this.stateMachine = new BotStateMachine(this.bot, rootStateMachine);
 
     this.bot.once('spawn', async () => {
-      registerCommands(this.bot, {
+      this.loadCommands({
         sort: this.sort,
         addDeposit: async ([itemName, ...coords]) => {
           const [x, y, z] = coords.map(parseInt);
@@ -82,6 +74,7 @@ export class BotSorter {
           );
         },
       });
+
       this.bot.on('chestLidMove', (block, isOpen) => {
         const { x, y, z } = block.position;
         const [withdrawalX, withdrawalY, withdrawZ] = this.withdrawalPosition;
