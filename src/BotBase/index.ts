@@ -78,6 +78,9 @@ export abstract class BotBase {
               );
             });
         },
+        entities: () => {
+          console.log(this.bot.entities);
+        },
         entity: (_username, [id]) => {
           console.log(this.bot.entities[id]);
         },
@@ -136,16 +139,16 @@ export abstract class BotBase {
     return new BotStateMachine(this.bot, rootStateMachine);
   };
 
-  /** Methods */
   sleep = async () => {
-    this.bot.chat('going to sleep now');
+    await this.bot.pathfinder.goto(new goals.GoalNear(3, -60, -15, 2));
 
-    await this.bot.pathfinder.goto(new goals.GoalNear(2, -60, -15, 1));
+    const bedBlock = this.bot.findBlock({
+      matching: (block) => this.bot.isABed(block),
+    });
 
-    const bedBlock = this.bot.blockAt(new Vec3(2, -60, -15));
-    if (bedBlock && this.bot.isABed(bedBlock)) {
-      await this.bot.sleep(bedBlock).catch(() => {
-        console.log("Can't sleep now");
+    if (bedBlock) {
+      await this.bot.sleep(bedBlock).catch((err) => {
+        console.error(err);
       });
     }
   };
