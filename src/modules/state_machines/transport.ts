@@ -1,21 +1,17 @@
 import { Bot } from 'mineflayer';
 import {
-  BehaviorIdle,
   NestedStateMachine,
   StateMachineTargets,
   StateTransition,
 } from 'mineflayer-statemachine';
 import { Item } from 'prismarine-item';
 import { Job } from 'bullmq';
-import { BotChest } from '../types';
-import { config } from 'dotenv';
+import { BotChest } from '../../types';
 import {
   BehaviorWait,
   BehaviorCheckInventory,
   BehaviorDepositItems,
-} from '../behaviors';
-import { timeIn } from '../helpers';
-import { CarrierConfig } from '../types/carier';
+} from './behaviors';
 
 interface TransportOptions {
   waitTime: number;

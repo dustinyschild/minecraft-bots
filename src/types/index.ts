@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { ObjectId } from 'mongoose';
 
 export interface IServer {
   host: string;
@@ -7,6 +7,7 @@ export interface IServer {
 }
 
 export interface IBot {
+  _id: ObjectId;
   username: string;
   type: 'none' | 'farmer' | 'sorter' | 'courier' | 'carrier';
   server: mongoose.Schema.Types.ObjectId;

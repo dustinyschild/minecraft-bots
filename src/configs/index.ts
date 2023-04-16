@@ -1,5 +1,5 @@
 import { readFileSync } from 'fs';
-import { CarrierConfigs } from '../types/carier';
+import { CarrierConfigs } from '../types/carrier';
 import { FarmerConfigs } from '../types/farmer';
 import { SorterConfigs } from '../types/sorter';
 

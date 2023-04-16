@@ -1,5 +1,5 @@
-import { AnyObject, Schema, SchemaType } from 'mongoose';
-import { IBoundary } from '../../types';
+import { Schema, SchemaType } from 'mongoose';
+import { IBoundary } from '../../../types';
 
 export class Boundary extends SchemaType {
   cast = (vectors: IBoundary) => {

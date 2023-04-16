@@ -1,6 +1,6 @@
 import { FilterQuery } from 'mongoose';
-import { IServer } from '../types';
-import { Server } from '../db/models';
+import { IServer } from '../../../types';
+import { Server } from '../models';
 
 export const findOne = async (target: FilterQuery<IServer>) => {
   return Server.findOne(target);

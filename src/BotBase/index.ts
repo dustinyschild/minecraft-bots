@@ -2,15 +2,15 @@ import { Bot, BotOptions, createBot } from 'mineflayer';
 import mcDataLoader, { IndexedData } from 'minecraft-data';
 import { pathfinder, Movements, goals } from 'mineflayer-pathfinder';
 import { Vec3 } from 'vec3';
-import { BotCommandDictionary, ItemRegistry } from '../types';
+import { BotCommandDictionary } from '../types';
 import {
   loadBlockCommands,
   loadChatCommands,
   loadEntityCommands,
   loadItemCommands,
   loadMovementCommands,
+  loadSelfCommands,
   parseCommand,
-  registerCommands,
 } from '../modules/commands';
 import {
   BehaviorIdle,
@@ -30,7 +30,6 @@ export abstract class BotBase {
     this.mcData = mcDataLoader(this.bot.version);
 
     this.bot.loadPlugin(pathfinder);
-
     this.movements = new Movements(this.bot, this.mcData);
 
     this.bot.once('spawn', async () => {
@@ -69,12 +68,14 @@ export abstract class BotBase {
       ...loadItemCommands(this.bot),
       ...loadEntityCommands(this.bot),
       ...loadMovementCommands(this.bot),
+      ...loadSelfCommands(this.bot),
       sleep: this.sleep,
       ...(additionalCommands || {}),
     };
 
     this.bot.on('whisper', (username, message) => {
       const { command, commandArgs } = parseCommand(username, message);
+      console.log(message, commands[command]);
 
       commands[command]?.(username, commandArgs);
     });
@@ -82,9 +83,9 @@ export abstract class BotBase {
 
   /** Methods */
   sleep = async () => {
-    await this.bot.pathfinder.goto(new goals.GoalNear(2, -60, -15, 1));
+    await this.bot.pathfinder.goto(new goals.GoalNear(-13, -60, 32, 1));
 
-    const bedBlock = this.bot.blockAt(new Vec3(2, -60, -15));
+    const bedBlock = this.bot.blockAt(new Vec3(-13, -60, 32));
     if (bedBlock && this.bot.isABed(bedBlock)) {
       await this.bot.sleep(bedBlock).catch(() => {
         console.log("Can't sleep now");

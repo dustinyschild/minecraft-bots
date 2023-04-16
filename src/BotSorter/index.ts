@@ -8,7 +8,6 @@ import {
   BehaviorIdle,
   BotStateMachine,
   NestedStateMachine,
-  StateTransition,
 } from 'mineflayer-statemachine';
 import { BotBase } from '../BotBase';
 

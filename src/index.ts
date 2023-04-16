@@ -1,7 +1,5 @@
 import * as dotenv from 'dotenv';
-
-import { StateMachineWebserver } from 'mineflayer-statemachine';
-import * as db from './db/connect';
+import * as db from './modules/db/connect';
 import { loadBots } from './loaders';
 
 (async () => {

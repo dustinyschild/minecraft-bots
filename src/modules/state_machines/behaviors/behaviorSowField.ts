@@ -3,9 +3,9 @@ import { goals } from 'mineflayer-pathfinder';
 import { StateBehavior, StateMachineTargets } from 'mineflayer-statemachine';
 import { Block } from 'prismarine-block';
 import { Vec3 } from 'vec3';
-import { asyncTimeout } from '../helpers';
-import { IBoundary } from '../types';
-import { IField } from '../types/farmer';
+import { asyncTimeout } from '../../../helpers';
+import { IBoundary } from '../../../types';
+import { IField } from '../../../types/farmer';
 
 export class BehaviorSowField implements StateBehavior {
   stateName: string = 'Sow Field';

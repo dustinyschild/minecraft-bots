@@ -1,6 +1,6 @@
 import { BotFarmer } from './BotFarmer';
-import * as servers from './daos/servers';
-import * as farmers from './daos/farmers';
+import * as servers from './modules/db/daos/servers';
+import * as farmers from './modules/db/daos/farmers';
 import { IServer } from './types';
 
 export const loadBots = async (targetServer: IServer) => {

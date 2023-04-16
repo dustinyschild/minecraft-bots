@@ -5,9 +5,9 @@ import {
   BehaviorCompletedStandBy,
   BehaviorStandBy,
   BehaviorWait,
-} from '../behaviors';
-import { timeIn } from '../helpers';
-import { ICoordinate } from '../types';
+} from './behaviors';
+import { timeIn } from '../../helpers';
+import { ICoordinate } from '../../types';
 
 export const loadStandByStateMachine = (
   bot: Bot,

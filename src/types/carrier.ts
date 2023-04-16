@@ -1,11 +1,11 @@
-import { ICoordinate, BotChest } from '.';
+import { ICoordinate, BotChest, IBot } from '.';
 
-export interface CarrierConfig {
+export interface ICarrier extends IBot {
   standByPosition: ICoordinate;
   withdrawalChests: BotChest[];
   depositChests: BotChest[];
 }
 
 export interface CarrierConfigs {
-  [username: string]: CarrierConfig;
+  [username: string]: ICarrier;
 }

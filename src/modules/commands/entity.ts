@@ -23,16 +23,5 @@ export const loadEntityCommands = (bot: Bot): BotCommandDictionary => {
     entity: (_username, [id]) => {
       console.log(bot.entities[id]);
     },
-    self: (_username, [property]) => {
-      if (property) {
-        const [_key, propValue] = Object.entries(bot.entity).find(
-          ([key]) => key === property,
-        ) as [string, Entity];
-
-        console.log(propValue);
-      } else {
-        console.log(bot.entity);
-      }
-    },
   };
 };

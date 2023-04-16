@@ -2,7 +2,7 @@ import { Bot } from 'mineflayer';
 import { goals } from 'mineflayer-pathfinder';
 import { StateBehavior, StateMachineTargets } from 'mineflayer-statemachine';
 import { Vec3 } from 'vec3';
-import { BotChest } from '../types';
+import { BotChest } from '../../../types';
 
 export class BehaviorCheckChests implements StateBehavior {
   stateName: string = 'Check Chests';

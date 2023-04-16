@@ -1,6 +1,6 @@
 import { FilterQuery } from 'mongoose';
-import { IFarmer } from '../types/farmer';
-import { Farmer } from '../db/models';
+import { IFarmer } from '../../../types/farmer';
+import { Farmer } from '../models';
 
 export const create = async (input: IFarmer) => {
   return Farmer.create(input);

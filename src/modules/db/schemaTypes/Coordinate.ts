@@ -1,5 +1,5 @@
 import { Schema, SchemaType } from 'mongoose';
-import { ICoordinate } from '../../types';
+import { ICoordinate } from '../../../types';
 
 export class Coordinate extends SchemaType {
   cast = (vector: ICoordinate) => {

@@ -1,6 +1,6 @@
 import { FilterQuery } from 'mongoose';
-import { IBot } from '../types';
-import { Bot } from '../db/models';
+import { IBot } from '../../../types';
+import { Bot } from '../models';
 
 export const create = async <T extends IBot>(input: T) => {
   return Bot.create(input);

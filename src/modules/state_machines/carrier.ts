@@ -8,11 +8,11 @@ import {
   BehaviorDepositItems,
   BehaviorCheckInventory,
   BehaviorWait,
-} from '../behaviors';
-import { timeIn } from '../helpers';
-import { CarrierConfig } from '../types/carier';
+} from './behaviors';
+import { timeIn } from '../../helpers';
+import { ICarrier } from '../../types/carrier';
 
-export const loadCarrierStateMachine = (bot: Bot, config: CarrierConfig) => {
+export const loadCarrierStateMachine = (bot: Bot, config: ICarrier) => {
   const targets: StateMachineTargets = {
     item: {
       currentInventory: null,

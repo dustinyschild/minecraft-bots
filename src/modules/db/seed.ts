@@ -1,9 +1,8 @@
-import { IServer } from '../types';
-import { connect, disconnect } from './connect';
-import { findOrCreate } from '../daos/servers';
-import { Bot, Farmer } from './models';
-
 import * as dotenv from 'dotenv';
+import { connect, disconnect } from './connect';
+import { IServer } from '../../types';
+import { findOrCreate } from './daos/servers';
+import { Farmer } from './models';
 dotenv.config();
 
 const serverConfig: IServer = {
@@ -12,19 +11,19 @@ const serverConfig: IServer = {
   version: process.env.version || '1.19.3',
 };
 
-const logCreated = (bot: any) => {
-  console.log(`Created ${bot.username} as type ${bot.type}.`);
+const nukeFarmers = async () => {
+  await Farmer.deleteMany();
 };
 
 const createFarmer = async () => {
   const server = await findOrCreate(serverConfig);
 
-  await Farmer.create({
+  const bot = await Farmer.create({
     username: 'farmer_john',
     server: server._id,
-    standByPosition: [-16, -60, 36],
     fields: [
       {
+        name: 'wheat_field1',
         boundary: [
           [-13, -60, 37],
           [-5, -60, 45],
@@ -45,6 +44,7 @@ const createFarmer = async () => {
         ],
       },
       {
+        name: 'carrot_field1',
         boundary: [
           [-3, -60, 35],
           [5, -60, 45],
@@ -61,6 +61,7 @@ const createFarmer = async () => {
         ],
       },
       {
+        name: 'beetroot_field1',
         boundary: [
           [7, -60, 37],
           [15, -60, 45],
@@ -81,6 +82,7 @@ const createFarmer = async () => {
         ],
       },
       {
+        name: 'potato_field1',
         boundary: [
           [17, -60, 37],
           [25, -60, 45],
@@ -101,13 +103,16 @@ const createFarmer = async () => {
         ],
       },
     ],
-  }).then(logCreated);
+  });
+
+  console.log(`Created ${bot.username} as type ${bot.type}.`);
 };
 
 // DROP COLLECTIONS AND CREATE NEW
 (async () => {
   await connect();
 
+  await nukeFarmers();
   await createFarmer();
 
   await disconnect();

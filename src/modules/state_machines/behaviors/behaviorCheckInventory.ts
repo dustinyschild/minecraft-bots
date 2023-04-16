@@ -1,7 +1,7 @@
 import { Bot } from 'mineflayer';
 import { StateBehavior, StateMachineTargets } from 'mineflayer-statemachine';
 import { Item } from 'prismarine-item';
-import { asyncTimeout } from '../helpers';
+import { asyncTimeout } from '../../../helpers';
 
 export class BehaviorCheckInventory implements StateBehavior {
   stateName: string = 'Check Inventory';

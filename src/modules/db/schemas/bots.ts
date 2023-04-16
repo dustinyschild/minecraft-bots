@@ -1,6 +1,4 @@
-import { Document, model, Schema } from 'mongoose';
-import { IBot } from '../../types';
-import { IFarmer, IField } from '../../types/farmer';
+import { Schema } from 'mongoose';
 import { Boundary } from '../schemaTypes/Boundary';
 import { Coordinate } from '../schemaTypes/Coordinate';
 
@@ -12,6 +10,7 @@ const Chest = {
 export const botSchema = new Schema(
   {
     username: { type: String, required: true },
+    bedPosition: Coordinate,
     type: {
       type: String,
       enum: ['farmer', 'sorter', 'courier', 'carrier'],
@@ -23,6 +22,7 @@ export const botSchema = new Schema(
 );
 
 const fieldSchema = new Schema({
+  name: { type: String, required: true },
   boundary: { type: Boundary, required: true },
   block: {
     type: String,
@@ -47,7 +47,7 @@ const fieldSchema = new Schema({
 });
 
 export const farmerSchema = new Schema({
-  standByPosition: { type: Coordinate, required: true },
+  standByPosition: { type: Coordinate },
   fields: {
     type: [fieldSchema],
     default: [],

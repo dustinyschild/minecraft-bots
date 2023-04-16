@@ -3,10 +3,10 @@ import { goals } from 'mineflayer-pathfinder';
 import { uniqBy } from 'lodash';
 import { StateBehavior, StateMachineTargets } from 'mineflayer-statemachine';
 import { Block } from 'prismarine-block';
-import { IBoundary } from '../types';
+import { IBoundary } from '../../../types';
 import { Vec3 } from 'vec3';
-import { IField } from '../types/farmer';
-import { asyncTimeout } from '../helpers';
+import { IField } from '../../../types/farmer';
+import { asyncTimeout } from '../../../helpers';
 
 export class BehaviorHarvestField implements StateBehavior {
   stateName: string = 'Harvest Field';

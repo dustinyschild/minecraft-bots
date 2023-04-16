@@ -2,8 +2,8 @@ import { Bot } from 'mineflayer';
 import { StateBehavior, StateMachineTargets } from 'mineflayer-statemachine';
 import { Vec3 } from 'vec3';
 import { Block } from 'prismarine-block';
-import { IBoundary } from '../types';
-import { IField } from '../types/farmer';
+import { IBoundary } from '../../../types';
+import { IField } from '../../../types/farmer';
 
 export class BehaviorCheckFields implements StateBehavior {
   stateName: string = 'Check Fields';

@@ -15,9 +15,9 @@ import {
   BehaviorCompletedSowing,
   BehaviorCompletedHarvesting,
   BehaviorCompletedDeposit,
-} from '../behaviors';
-import { timeIn } from '../helpers';
-import { IFarmer } from '../types/farmer';
+} from './behaviors';
+import { timeIn } from '../../helpers';
+import { IFarmer } from '../../types/farmer';
 import { loadStandByStateMachine } from './standBy';
 
 export const loadFarmingStateMachine = (bot: Bot, config: IFarmer) => {
